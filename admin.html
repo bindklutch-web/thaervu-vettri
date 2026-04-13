@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — தேர்வு வெற்றி</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Tamil:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.admin-wrap { max-width:860px; margin:0 auto; padding:40px 32px; }
+.admin-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:12px; }
+.admin-title { font-family:'Tiro Tamil',serif; font-size:28px; color:var(--ink); }
+.admin-subtitle { font-size:13px; color:var(--ink-light); margin-top:4px; }
+.tabs { display:flex; gap:4px; background:var(--cream-dark); padding:4px; border-radius:10px; margin-bottom:28px; }
+.tab { flex:1; padding:9px; text-align:center; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; color:var(--ink-mid); transition:all 0.15s; border:none; background:none; }
+.tab.active { background:var(--white); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+.form-card { background:var(--white); border:1px solid var(--cream-dark); border-radius:14px; padding:28px; }
+.form-section { margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--cream-dark); }
+.form-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.form-section-title { font-size:13px; font-weight:700; color:var(--saffron); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:12px; font-weight:600; color:var(--ink-mid); margin-bottom:6px; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%; padding:10px 12px; border:1px solid var(--cream-dark);
+  border-radius:8px; font-size:14px; font-family:'DM Sans',sans-serif;
+  color:var(--ink); background:var(--cream); transition:border-color 0.15s; outline:none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color:var(--saffron); background:var(--white);
+}
+.form-group textarea { resize:vertical; min-height:90px; }
+.quiz-builder { display:flex; flex-direction:column; gap:16px; }
+.quiz-q-card { background:var(--cream); border:1px solid var(--cream-dark); border-radius:10px; padding:16px; }
+.quiz-q-num { font-size:11px; font-weight:700; color:var(--saffron); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+.options-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
+.option-input { display:flex; align-items:center; gap:8px; }
+.option-letter-label { width:24px; height:24px; border-radius:50%; background:var(--cream-dark); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; color:var(--ink-mid); }
+.option-input input { flex:1; padding:8px 10px; border:1px solid var(--cream-dark); border-radius:6px; font-size:13px; font-family:'DM Sans',sans-serif; background:var(--white); outline:none; }
+.option-input input:focus { border-color:var(--saffron); }
+.correct-select-wrap { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.correct-select-wrap label { font-size:12px; color:var(--ink-mid); font-weight:500; }
+.form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; flex-wrap:wrap; }
+.articles-list { display:flex; flex-direction:column; gap:12px; }
+.admin-article-card { background:var(--white); border:1px solid var(--cream-dark); border-radius:10px; padding:16px; display:flex; align-items:center; gap:14px; }
+.admin-article-emoji { font-size:28px; flex-shrink:0; }
+.admin-article-info { flex:1; min-width:0; }
+.admin-article-title { font-family:'Tiro Tamil',serif; font-size:15px; color:var(--ink); line-height:1.4; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.admin-article-meta { font-size:11px; color:var(--ink-light); display:flex; gap:10px; flex-wrap:wrap; }
+.admin-article-actions { display:flex; gap:8px; flex-shrink:0; }
+.btn-view { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:500; text-decoration:none; background:var(--blue-light); color:var(--blue); border:none; cursor:pointer; }
+.btn-delete { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:500; background:var(--red-light); color:var(--red); border:none; cursor:pointer; }
+.btn-delete:hover { background:#FFD0D0; }
+.empty-admin { text-align:center; padding:48px; color:var(--ink-light); border:1px dashed var(--cream-dark); border-radius:12px; }
+.toast { position:fixed; bottom:24px; right:24px; background:var(--green); color:var(--white); padding:12px 20px; border-radius:10px; font-size:14px; font-weight:500; transform:translateY(80px); opacity:0; transition:all 0.3s; z-index:999; }
+.toast.show { transform:translateY(0); opacity:1; }
+.publishing-overlay { display:none; position:fixed; inset:0; background:rgba(26,18,8,0.5); z-index:200; align-items:center; justify-content:center; }
+.publishing-overlay.show { display:flex; }
+.publishing-box { background:var(--white); border-radius:14px; padding:32px 40px; text-align:center; }
+.publishing-box div:first-child { font-size:32px; margin-bottom:12px; }
+.publishing-box p { font-size:14px; color:var(--ink-mid); }
+
+/* AI Section */
+.ai-section {
+  background: linear-gradient(135deg, #FFF8F0 0%, #FFF3E0 100%);
+  border: 2px solid var(--saffron);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.ai-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--saffron);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ai-section-sub {
+  font-size: 12px;
+  color: var(--ink-light);
+  margin-bottom: 16px;
+}
+.ai-input-row {
+  display: flex;
+  gap: 10px;
+}
+.ai-input-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  background: var(--white);
+}
+.ai-input-row input:focus { border-color: var(--saffron); }
+.btn-ai {
+  padding: 12px 22px;
+  background: var(--saffron);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.btn-ai:hover { opacity: 0.88; }
+.btn-ai:disabled { opacity: 0.5; cursor: not-allowed; }
+.ai-status {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-mid);
+  min-height: 20px;
+}
+
+@media(max-width:768px){
+  .admin-wrap { padding:20px; }
+  .form-row { grid-template-columns:1fr; }
+  .options-grid { grid-template-columns:1fr; }
+  .admin-article-card { flex-wrap:wrap; }
+  .ai-input-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div id="nav-container"></div>
+
+<div class="admin-wrap">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">⚙ Admin Panel</div>
+      <div class="admin-subtitle">புதிய கட்டுரை சேர்க்கவும் · நிர்வகிக்கவும் · JSONBin-ல் save ஆகும்</div>
+    </div>
+    <a href="index.html" class="btn-secondary" style="font-size:13px;padding:9px 18px;">← முகப்பு பக்கம்</a>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('add')">➕ புதிய கட்டுரை</button>
+    <button class="tab" onclick="showTab('manage')">📋 நிர்வாகம்</button>
+  </div>
+
+  <!-- ADD TAB -->
+  <div id="tab-add">
+
+    <!-- AI WRITER -->
+    <div class="ai-section">
+      <div class="ai-section-title">🤖 AI கட்டுரை எழுத்தாளர்</div>
+      <div class="ai-section-sub">ஒரு தலைப்பை தட்டச்சு செய்யவும் — AI தானாக முழு கட்டுரையையும் எழுதும்</div>
+      <div class="ai-input-row">
+        <input type="text" id="ai-topic" placeholder="உதா: ISRO Gaganyaan mission, Budget 2025, காவிரி நீர் பிரச்சினை...">
+        <button class="btn-ai" id="ai-btn" onclick="generateWithAI()">✨ AI எழுது</button>
+      </div>
+      <div class="ai-status" id="ai-status"></div>
+    </div>
+
+    <div class="form-card">
+
+      <div class="form-section">
+        <div class="form-section-title">அடிப்படை தகவல்</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>தலைப்பு (Title) *</label>
+            <input type="text" id="f-title" placeholder="உதா: தமிழ்நாட்டில் புதிய திட்டம் அறிவிப்பு">
+          </div>
+          <div class="form-group">
+            <label>தலைப்பு வகை (Category) *</label>
+            <select id="f-category">
+              <option value="">தேர்ந்தெடுக்கவும்</option>
+              <option>அரசியல் & நிர்வாகம்</option>
+              <option>அறிவியல் & தொழில்நுட்பம்</option>
+              <option>சுற்றுச்சூழல்</option>
+              <option>பொருளாதாரம்</option>
+              <option>தமிழ்நாடு</option>
+              <option>வரலாறு</option>
+              <option>விளையாட்டு</option>
+              <option>சர்வதேசம்</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>சுருக்கம் (Excerpt) *</label>
+            <textarea id="f-excerpt" placeholder="கட்டுரையின் 1-2 வரி சுருக்கம்..." style="min-height:70px;"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>தேதி</label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Emoji</label>
+              <input type="text" id="f-emoji" placeholder="☀️" maxlength="4" style="font-size:22px;text-align:center;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">கட்டுரை உள்ளடக்கம்</div>
+        <div class="form-group">
+          <label>முழு கட்டுரை (2-3 பத்திகளில் எழுதவும்) *</label>
+          <textarea id="f-content" placeholder="கட்டுரையை இங்கே தமிழில் எழுதவும்..." style="min-height:140px;"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">TNPSC தேர்வு குறிப்புகள்</div>
+        <div class="form-group">
+          <label>குறிப்பு 1 *</label>
+          <input type="text" id="f-tip1" placeholder="உதா: National Solar Mission — 2010-ல் தொடங்கியது">
+        </div>
+        <div class="form-group">
+          <label>குறிப்பு 2 *</label>
+          <input type="text" id="f-tip2" placeholder="உதா: இது Group 4 பொது அறிவு பிரிவில் கேட்கப்படும்">
+        </div>
+        <div class="form-group">
+          <label>குறிப்பு 3 (விரும்பினால்)</label>
+          <input type="text" id="f-tip3" placeholder="கூடுதல் குறிப்பு (optional)">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">வினாடி வினா (3 வினாக்கள்)</div>
+        <div class="quiz-builder" id="quiz-builder"></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="resetForm()">மீட்டமை</button>
+        <button class="btn-primary" onclick="publishArticle()">✓ வெளியிடவும்</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE TAB -->
+  <div id="tab-manage" style="display:none;">
+    <div id="admin-articles-list">
+      <div style="text-align:center;padding:40px;color:var(--ink-light);">
+        <div style="font-size:24px;margin-bottom:8px;">⏳</div>
+        <div>படிக்கிறது...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Publishing overlay -->
+<div class="publishing-overlay" id="publishing-overlay">
+  <div class="publishing-box">
+    <div>⏳</div>
+    <p>சேமிக்கிறது...<br>சிறிது நேரம் காத்திருக்கவும்</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="footer-logo">தேர்வு வெற்றி</div>
+  <div class="footer-copy">Admin Panel</div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-container').innerHTML = renderNav('');
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+const LETTERS = ['அ','ஆ','இ','ஈ'];
+
+function buildQuizInputs(quiz) {
+  document.getElementById('quiz-builder').innerHTML = [1,2,3].map(qn => {
+    const q = quiz && quiz[qn-1];
+    return `
+    <div class="quiz-q-card">
+      <div class="quiz-q-num">வினா ${qn}</div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>வினா *</label>
+        <input type="text" id="q${qn}-question" placeholder="கேள்வியை இங்கே எழுதவும்..." value="${q ? q.question.replace(/"/g,'&quot;') : ''}">
+      </div>
+      <div class="options-grid">
+        ${[0,1,2,3].map(oi=>`
+          <div class="option-input">
+            <span class="option-letter-label">${LETTERS[oi]}</span>
+            <input type="text" id="q${qn}-opt${oi}" placeholder="விடை ${LETTERS[oi]}" value="${q ? q.options[oi].replace(/"/g,'&quot;') : ''}">
+          </div>`).join('')}
+      </div>
+      <div class="correct-select-wrap">
+        <label>சரியான விடை:</label>
+        <select id="q${qn}-correct" style="padding:6px 10px;border:1px solid var(--cream-dark);border-radius:6px;background:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+          <option value="0" ${q && q.correct===0?'selected':''}>அ</option>
+          <option value="1" ${q && q.correct===1?'selected':''}>ஆ</option>
+          <option value="2" ${q && q.correct===2?'selected':''}>இ</option>
+          <option value="3" ${q && q.correct===3?'selected':''}>ஈ</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top:10px;margin-bottom:0;">
+        <label>விளக்கம் (Explanation) *</label>
+        <input type="text" id="q${qn}-exp" placeholder="சரியான விடை ஏன்? சுருக்கமாக..." value="${q ? q.explanation.replace(/"/g,'&quot;') : ''}">
+      </div>
+    </div>`;
+  }).join('');
+}
+
+buildQuizInputs();
+
+// ── AI WRITER ─────────────────────────────────────────────
+async function generateWithAI() {
+  const topic = document.getElementById('ai-topic').value.trim();
+  if (!topic) {
+    document.getElementById('ai-status').textContent = '⚠️ தலைப்பை உள்ளிடவும்.';
+    return;
+  }
+
+  const btn = document.getElementById('ai-btn');
+  const status = document.getElementById('ai-status');
+  btn.disabled = true;
+  btn.textContent = '⏳ எழுதுகிறது...';
+  status.textContent = '🤖 AI கட்டுரை தயாரிக்கிறது — சிறிது நேரம் காத்திருக்கவும்...';
+
+  try {
+    const response = await fetch('/.netlify/functions/ai-write', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic })
+    });
+
+    const parsed = await response.json();
+
+    // Fill all form fields
+    document.getElementById('f-title').value    = parsed.title    || '';
+    document.getElementById('f-excerpt').value  = parsed.excerpt  || '';
+    document.getElementById('f-content').value  = parsed.content  || '';
+    document.getElementById('f-emoji').value    = parsed.emoji    || '📰';
+    document.getElementById('f-tip1').value     = parsed.examTips?.[0] || '';
+    document.getElementById('f-tip2').value     = parsed.examTips?.[1] || '';
+    document.getElementById('f-tip3').value     = parsed.examTips?.[2] || '';
+
+    // Set category
+    const catSelect = document.getElementById('f-category');
+    for (let opt of catSelect.options) {
+      if (opt.value === parsed.category) { catSelect.value = parsed.category; break; }
+    }
+
+    // Fill quiz
+    buildQuizInputs(parsed.quiz);
+
+    status.textContent = '✅ AI கட்டுரை தயார்! திருத்தி வெளியிடவும்.';
+    status.style.color = 'green';
+
+    // Scroll to form
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+
+  } catch(e) {
+    console.error(e);
+    status.textContent = '❌ பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.';
+    status.style.color = 'red';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✨ AI எழுது';
+}
+
+// Allow Enter key on AI input
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('ai-topic').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generateWithAI();
+  });
+});
+
+// ── PUBLISH ───────────────────────────────────────────────
+async function publishArticle() {
+  const title    = document.getElementById('f-title').value.trim();
+  const category = document.getElementById('f-category').value;
+  const excerpt  = document.getElementById('f-excerpt').value.trim();
+  const content  = document.getElementById('f-content').value.trim();
+  const tip1     = document.getElementById('f-tip1').value.trim();
+  const tip2     = document.getElementById('f-tip2').value.trim();
+  const tip3     = document.getElementById('f-tip3').value.trim();
+
+  if (!title||!category||!excerpt||!content||!tip1||!tip2) {
+    alert('தயவுசெய்து அனைத்து கட்டாய (*) புலங்களையும் நிரப்பவும்.');
+    return;
+  }
+
+  const quiz = [];
+  for (let qn=1; qn<=3; qn++) {
+    const question    = document.getElementById(`q${qn}-question`).value.trim();
+    const opts        = [0,1,2,3].map(oi=>document.getElementById(`q${qn}-opt${oi}`).value.trim());
+    const correct     = parseInt(document.getElementById(`q${qn}-correct`).value);
+    const explanation = document.getElementById(`q${qn}-exp`).value.trim();
+    if (!question||opts.some(o=>!o)||!explanation) {
+      alert(`வினா ${qn}-ல் அனைத்து தகவல்களையும் நிரப்பவும்.`);
+      return;
+    }
+    quiz.push({ question, options:opts, correct, explanation });
+  }
+
+  const examTips = [tip1, tip2];
+  if (tip3) examTips.push(tip3);
+
+  const article = {
+    date:     document.getElementById('f-date').value || new Date().toISOString().split('T')[0],
+    category, title, excerpt, content, examTips, quiz,
+    emoji:    document.getElementById('f-emoji').value || '📰',
+  };
+
+  document.getElementById('publishing-overlay').classList.add('show');
+  const result = await addArticle(article);
+  document.getElementById('publishing-overlay').classList.remove('show');
+
+  if (result.success) {
+    showToast('✓ கட்டுரை சேமிக்கப்பட்டது!');
+    resetForm();
+  } else {
+    alert('⚠️ சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.');
+  }
+}
+
+function resetForm() {
+  ['f-title','f-excerpt','f-content','f-tip1','f-tip2','f-tip3','f-emoji'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('f-category').value='';
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ai-topic').value='';
+  document.getElementById('ai-status').textContent='';
+  buildQuizInputs();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showTab(tab) {
+  document.getElementById('tab-add').style.display     = tab==='add'    ? 'block' : 'none';
+  document.getElementById('tab-manage').style.display  = tab==='manage' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0)===(tab==='add')));
+  if (tab==='manage') loadManageList();
+}
+
+async function loadManageList() {
+  const list = document.getElementById('admin-articles-list');
+  list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--ink-light);"><div style="font-size:24px;margin-bottom:8px;">⏳</div><div>படிக்கிறது...</div></div>`;
+  const articles = await getAllArticles();
+  if (!articles.length) {
+    list.innerHTML = `<div class="empty-admin"><p>இன்னும் கட்டுரைகள் சேர்க்கவில்லை.</p></div>`;
+    return;
+  }
+  list.innerHTML = `<div class="articles-list">${articles.map(a=>`
+    <div class="admin-article-card">
+      <div class="admin-article-emoji">${a.emoji||'📰'}</div>
+      <div class="admin-article-info">
+        <div class="admin-article-title">${a.title}</div>
+        <div class="admin-article-meta">
+          <span>${formatDate(a.date)}</span>
+          <span>·</span><span>${a.category}</span>
+          <span>·</span><span>${a.quiz?a.quiz.length:3} வினாக்கள்</span>
+        </div>
+      </div>
+      <div class="admin-article-actions">
+        <a href="article.html?id=${a.id}" target="_blank" class="btn-view">பார்க்க</a>
+        <button class="btn-delete" onclick="confirmDelete('${a.id}')">நீக்கு</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+async function confirmDelete(id) {
+  if (!confirm('இந்த கட்டுரையை நீக்கவா?')) return;
+  document.getElementById('publishing-overlay').classList.add('show');
+  const result = await deleteArticle(id);
+  document.getElementById('publishing-overlay').classList.remove('show');
+  if (result.success) {
+    showToast('🗑 கட்டுரை நீக்கப்பட்டது');
+    loadManageList();
+  } else {
+    alert('நீக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

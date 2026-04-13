@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>தேர்வு வெற்றி — TNPSC Current Affairs & Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Tamil:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.hero-wrap { background:var(--white); }
+.hero { max-width:1100px; margin:0 auto; padding:64px 32px 56px; display:grid; grid-template-columns:1fr 400px; gap:56px; align-items:center; }
+.hero-eyebrow { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--saffron); background:var(--saffron-light); padding:5px 12px; border-radius:20px; margin-bottom:20px; }
+.hero-eyebrow span { width:6px; height:6px; background:var(--saffron); border-radius:50%; }
+.hero h1 { font-family:'Tiro Tamil',serif; font-size:44px; line-height:1.2; color:var(--ink); margin-bottom:16px; }
+.hero h1 em { font-style:normal; color:var(--saffron); }
+.hero-desc { font-size:15px; color:var(--ink-mid); line-height:1.8; margin-bottom:28px; }
+.hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+.hero-stats { display:flex; gap:28px; margin-top:36px; padding-top:24px; border-top:1px solid var(--cream-dark); }
+.stat-num { font-size:22px; font-weight:700; color:var(--ink); }
+.stat-label { font-size:11px; color:var(--ink-light); margin-top:2px; }
+.hero-card { background:var(--cream); border:1px solid var(--cream-dark); border-radius:16px; padding:22px; position:relative; overflow:hidden; min-height:200px; }
+.hero-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:var(--saffron); border-radius:16px 16px 0 0; }
+.hero-card-tag { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--red); background:var(--red-light); padding:3px 8px; border-radius:4px; display:inline-block; margin-bottom:10px; }
+.hero-card-title { font-family:'Tiro Tamil',serif; font-size:16px; line-height:1.5; color:var(--ink); margin-bottom:8px; }
+.hero-card-excerpt { font-size:13px; color:var(--ink-mid); line-height:1.7; margin-bottom:12px; }
+.hero-card-link { font-size:13px; color:var(--saffron); font-weight:600; text-decoration:none; }
+.hero-card-link:hover { text-decoration:underline; }
+
+.articles-section { max-width:1100px; margin:0 auto; padding:56px 32px; }
+.section-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px; }
+.section-title { font-family:'Tiro Tamil',serif; font-size:26px; color:var(--ink); }
+.section-link { font-size:13px; color:var(--saffron); text-decoration:none; font-weight:500; }
+.articles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.article-card { background:var(--white); border-radius:12px; border:1px solid var(--cream-dark); overflow:hidden; transition:transform 0.15s,box-shadow 0.15s; text-decoration:none; display:block; color:inherit; }
+.article-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(26,18,8,0.08); }
+.article-card.featured { grid-column:span 2; }
+.article-thumb { height:150px; display:flex; align-items:center; justify-content:center; font-size:44px; }
+.article-card.featured .article-thumb { height:190px; }
+.article-content { padding:16px; }
+.article-category { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--saffron); margin-bottom:6px; }
+.article-title-card { font-family:'Tiro Tamil',serif; font-size:15px; line-height:1.5; color:var(--ink); margin-bottom:8px; }
+.article-card.featured .article-title-card { font-size:18px; }
+.article-excerpt-card { font-size:12px; color:var(--ink-mid); line-height:1.65; margin-bottom:8px; display:none; }
+.article-card.featured .article-excerpt-card { display:block; }
+.article-meta-card { font-size:11px; color:var(--ink-light); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+.categories-wrap { background:var(--white); }
+.categories-section { max-width:1100px; margin:0 auto; padding:48px 32px; }
+.categories-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
+.category-card { background:var(--cream); border-radius:10px; padding:18px 14px; text-align:center; cursor:pointer; transition:all 0.15s; border:1px solid var(--cream-dark); text-decoration:none; display:block; }
+.category-card:hover { background:var(--saffron-light); border-color:var(--saffron-mid); transform:translateY(-2px); }
+.category-icon { font-size:26px; margin-bottom:7px; }
+.category-name { font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; font-family:'Tiro Tamil',serif; }
+.category-count { font-size:11px; color:var(--ink-light); }
+
+.quiz-banner-wrap { max-width:1100px; margin:0 auto; padding:0 32px 56px; }
+.quiz-banner { background:var(--ink); border-radius:16px; padding:40px 48px; display:grid; grid-template-columns:1fr auto; align-items:center; gap:32px; position:relative; overflow:hidden; }
+.quiz-banner::before { content:''; position:absolute; right:-60px;top:-60px; width:240px;height:240px; border-radius:50%; background:rgba(232,96,10,0.15); }
+.quiz-banner-tag { display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; background:var(--saffron); color:var(--white); padding:4px 10px; border-radius:4px; margin-bottom:12px; }
+.quiz-banner h2 { font-family:'Tiro Tamil',serif; font-size:26px; color:var(--white); line-height:1.35; margin-bottom:10px; }
+.quiz-banner p { font-size:14px; color:rgba(255,255,255,0.6); line-height:1.6; }
+.quiz-score-box { text-align:center; background:rgba(255,255,255,0.06); border-radius:12px; padding:22px 28px; border:1px solid rgba(255,255,255,0.1); position:relative; z-index:1; }
+.quiz-score-num { font-size:40px; font-weight:700; color:var(--saffron); line-height:1; }
+.quiz-score-label { font-size:11px; color:rgba(255,255,255,0.5); margin-top:4px; margin-bottom:14px; }
+.btn-white { background:var(--white); color:var(--ink); padding:10px 22px; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; display:inline-block; }
+.btn-white:hover { background:var(--cream); }
+
+@media(max-width:768px){
+  .hero { grid-template-columns:1fr; padding:36px 20px; }
+  .hero-card { display:none; }
+  .hero h1 { font-size:32px; }
+  .articles-grid { grid-template-columns:1fr; }
+  .article-card.featured { grid-column:span 1; }
+  .categories-grid { grid-template-columns:repeat(3,1fr); }
+  .quiz-banner { grid-template-columns:1fr; padding:28px 24px; }
+  .quiz-score-box { display:none; }
+  .articles-section, .categories-section, .quiz-banner-wrap { padding-left:20px; padding-right:20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="nav-container"></div>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">இன்று</div>
+  <div class="ticker-track">
+    <span class="ticker-item">TNPSC தேர்வு — தினமும் புதிய செய்தி + வினாடி வினா</span>
+    <span class="ticker-dot"></span>
+    <span class="ticker-item">இலவச Mock Test இப்போதே தொடங்குங்கள்</span>
+    <span class="ticker-dot"></span>
+    <span class="ticker-item">தமிழில் எளிய படிப்பு — தேர்வில் வெற்றி</span>
+    <span class="ticker-dot"></span>
+    <span class="ticker-item">TNPSC தேர்வு — தினமும் புதிய செய்தி + வினாடி வினா</span>
+    <span class="ticker-dot"></span>
+    <span class="ticker-item">இலவச Mock Test இப்போதே தொடங்குங்கள்</span>
+    <span class="ticker-dot"></span>
+    <span class="ticker-item">தமிழில் எளிய படிப்பு — தேர்வில் வெற்றி</span>
+  </div>
+</div>
+
+<div class="hero-wrap">
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow"><span></span>தினமும் புதுசு — தினமும் படிக்கலாம்</div>
+      <h1>செய்தி படிங்க,<br><em>தேர்வு எழுதுங்க.</em></h1>
+      <p class="hero-desc">இன்றைய முக்கிய செய்திகளை எளிய தமிழில் படியுங்கள் — ஒவ்வொரு கட்டுரையிலும் TNPSC தேர்வு கோணமும் வினாடி வினாவும் உண்டு.</p>
+      <div class="hero-btns">
+        <a href="#articles" class="btn-primary">இன்றைய செய்தி படிக்க ↓</a>
+        <a href="#quiz-banner" class="btn-secondary">இலவச Quiz →</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num" id="stat-articles">...</div><div class="stat-label">கட்டுரைகள்</div></div>
+        <div><div class="stat-num">தினமும்</div><div class="stat-label">புதிய செய்தி</div></div>
+        <div><div class="stat-num">இலவசம்</div><div class="stat-label">படிக்கலாம்</div></div>
+      </div>
+    </div>
+    <div class="hero-card" id="hero-latest">
+      <div style="color:var(--ink-light);font-size:13px;margin-top:20px;">படிக்கிறது...</div>
+    </div>
+  </div>
+</div>
+
+<div id="articles">
+  <div class="articles-section">
+    <div class="section-header">
+      <div class="section-title">இன்றைய செய்திகள்</div>
+      <a href="#" class="section-link" id="show-all-btn" style="display:none;" onclick="showAllArticles(); return false;">அனைத்தும் பார்க்க →</a>
+    </div>
+    <div class="articles-grid" id="articles-grid">
+      <div style="grid-column:span 3; text-align:center; padding:40px; color:var(--ink-light);">
+        <div style="font-size:24px; margin-bottom:8px;">⏳</div>
+        <div>கட்டுரைகள் படிக்கிறது...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="categories-wrap" id="categories">
+  <div class="categories-section">
+    <div class="section-header">
+      <div class="section-title">தலைப்பு வாரியாக படிக்கவும்</div>
+    </div>
+    <div class="categories-grid" id="categories-grid"></div>
+  </div>
+</div>
+
+<div class="quiz-banner-wrap" id="quiz-banner">
+  <div class="quiz-banner">
+    <div style="position:relative;z-index:1;">
+      <div class="quiz-banner-tag">இன்றைய சவால்</div>
+      <h2>தினமும் வினாடி வினா<br>தினமும் வலிமையாகுங்கள்</h2>
+      <p>ஒவ்வொரு செய்தியிலும் 3 MCQ வினாக்கள் — தினமும் இலவசமாக படியுங்கள்!</p>
+      <a href="#articles" class="btn-white" style="margin-top:20px;display:inline-block;">இன்றைய கட்டுரை படிக்கவும் →</a>
+    </div>
+    <div class="quiz-score-box">
+      <div class="quiz-score-num" id="total-quizzes">...</div>
+      <div class="quiz-score-label">மொத்த வினாக்கள்</div>
+      <a href="#articles" class="btn-white">தொடங்குங்கள் →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">தேர்வு வெற்றி</div>
+  <div class="footer-tagline">தினமும் படிங்க · தேர்வில் வெல்லுங்க</div>
+  <ul class="footer-links">
+    <li><a href="index.html">இன்றைய செய்தி</a></li>
+    <li><a href="#categories">தலைப்புகள்</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 தேர்வு வெற்றி · தமிழ்நாடு</div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-container').innerHTML = renderNav('home');
+
+let allArticles = [];
+
+async function init() {
+  allArticles = await getAllArticles();
+  renderHero(allArticles);
+  renderGrid(allArticles.slice(0, 4));
+  renderCategories(allArticles);
+  document.getElementById('stat-articles').textContent = allArticles.length + '+';
+  document.getElementById('total-quizzes').textContent = allArticles.length * 3;
+  if (allArticles.length > 4) {
+    document.getElementById('show-all-btn').style.display = 'inline';
+  }
+}
+
+function renderHero(articles) {
+  if (!articles.length) {
+    document.getElementById('hero-latest').innerHTML = `<div style="color:var(--ink-light);font-size:13px;">இன்னும் கட்டுரைகள் இல்லை. <a href="admin.html" style="color:var(--saffron);">Admin-ல் சேர்க்கவும்</a></div>`;
+    return;
+  }
+  const a = articles[0];
+  document.getElementById('hero-latest').innerHTML = `
+    <div class="hero-card-tag">இன்று</div>
+    <div class="hero-card-title">${a.title}</div>
+    <p class="hero-card-excerpt">${a.excerpt}</p>
+    <div class="exam-box" style="margin-bottom:12px;">
+      <div class="exam-box-title">Exam Tip</div>
+      <div style="font-size:12px;color:#1A6B3C;">${a.examTips[0]}</div>
+    </div>
+    <a href="article.html?id=${a.id}" class="hero-card-link">முழுவதும் படிக்கவும் + Quiz →</a>`;
+}
+
+function renderGrid(articles) {
+  const grid = document.getElementById('articles-grid');
+  if (!articles.length) {
+    grid.innerHTML = `<div style="grid-column:span 3;text-align:center;padding:60px 20px;color:var(--ink-light);">
+      <div style="font-size:32px;margin-bottom:12px;">📝</div>
+      <div style="font-size:15px;margin-bottom:8px;">இன்னும் கட்டுரைகள் இல்லை</div>
+      <a href="admin.html" class="btn-primary" style="margin-top:8px;">Admin-ல் சேர்க்கவும் →</a>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = articles.map((a, i) => {
+    const colors = THUMB_COLORS[i % THUMB_COLORS.length];
+    const featured = i === 0 ? 'featured' : '';
+    return `<a href="article.html?id=${a.id}" class="article-card ${featured}">
+      <div class="article-thumb" style="background:linear-gradient(135deg,${colors[0]} 0%,${colors[1]} 100%);">${a.emoji || '📰'}</div>
+      <div class="article-content">
+        <div class="article-category">${a.category}</div>
+        <div class="article-title-card">${a.title}</div>
+        <div class="article-excerpt-card">${a.excerpt}</div>
+        <div class="article-meta-card">
+          <span>${formatDate(a.date)}</span>
+          <span>·</span>
+          <span class="quiz-tag">${a.quiz ? a.quiz.length : 3} வினாக்கள்</span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function renderCategories(articles) {
+  const counts = {};
+  articles.forEach(a => { counts[a.category] = (counts[a.category] || 0) + 1; });
+  const grid = document.getElementById('categories-grid');
+  const cats = Object.keys(counts);
+  if (!cats.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = cats.map(cat => {
+    const meta = CATEGORY_META[cat] || { icon: '📰' };
+    return `<a href="#" class="category-card" onclick="filterCat('${cat}');return false;">
+      <div class="category-icon">${meta.icon}</div>
+      <div class="category-name">${cat}</div>
+      <div class="category-count">${counts[cat]} கட்டுரைகள்</div>
+    </a>`;
+  }).join('');
+}
+
+function filterCat(cat) {
+  const filtered = allArticles.filter(a => a.category === cat);
+  renderGrid(filtered);
+  document.getElementById('articles').scrollIntoView({ behavior:'smooth' });
+  document.getElementById('show-all-btn').style.display = 'inline';
+}
+
+function showAllArticles() {
+  renderGrid(allArticles);
+  document.getElementById('show-all-btn').style.display = 'none';
+}
+
+init();
+</script>
+</body>
+</html>

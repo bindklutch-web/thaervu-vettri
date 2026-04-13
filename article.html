@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>தேர்வு வெற்றி</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Tamil:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.article-wrap { max-width:740px; margin:0 auto; padding:48px 32px; }
+.back-link { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-mid); text-decoration:none; margin-bottom:24px; }
+.back-link:hover { color:var(--saffron); }
+.article-header { margin-bottom:28px; }
+.article-header h1 { font-family:'Tiro Tamil',serif; font-size:32px; line-height:1.35; color:var(--ink); margin-bottom:12px; }
+.article-header .meta { font-size:12px; color:var(--ink-light); display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
+.article-thumb-full { width:100%; height:220px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:72px; margin-bottom:28px; }
+.article-body { font-size:15px; color:var(--ink-mid); line-height:1.9; margin-bottom:28px; }
+.article-body p { margin-bottom:14px; }
+.divider { border:none; border-top:1px solid var(--cream-dark); margin:28px 0; }
+.share-row { display:flex; align-items:center; gap:12px; margin-top:24px; flex-wrap:wrap; }
+.share-label { font-size:13px; color:var(--ink-light); }
+.share-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:1px solid var(--cream-dark); border-radius:8px; font-size:13px; color:var(--ink-mid); text-decoration:none; cursor:pointer; background:var(--white); transition:background 0.12s; }
+.share-btn:hover { background:var(--cream); }
+.related-section { max-width:740px; margin:0 auto; padding:0 32px 56px; }
+.related-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+.related-card { background:var(--white); border:1px solid var(--cream-dark); border-radius:10px; padding:14px; text-decoration:none; display:block; transition:transform 0.12s; color:inherit; }
+.related-card:hover { transform:translateY(-2px); }
+.related-cat { font-size:10px; font-weight:700; color:var(--saffron); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:5px; }
+.related-title { font-family:'Tiro Tamil',serif; font-size:14px; line-height:1.5; color:var(--ink); }
+@media(max-width:768px){
+  .article-wrap, .related-section { padding-left:20px; padding-right:20px; }
+  .article-header h1 { font-size:24px; }
+  .related-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="nav-container"></div>
+<div id="page-content">
+  <div style="text-align:center;padding:80px 20px;color:var(--ink-light);">
+    <div style="font-size:28px;margin-bottom:12px;">⏳</div>
+    <div>படிக்கிறது...</div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">தேர்வு வெற்றி</div>
+  <div class="footer-tagline">தினமும் படிங்க · தேர்வில் வெல்லுங்க</div>
+  <ul class="footer-links">
+    <li><a href="index.html">இன்றைய செய்தி</a></li>
+    <li><a href="index.html#categories">தலைப்புகள்</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 தேர்வு வெற்றி · தமிழ்நாடு</div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-container').innerHTML = renderNav('');
+
+const params = new URLSearchParams(window.location.search);
+const articleId = params.get('id');
+
+let article = null;
+let userAnswers = {};
+
+async function init() {
+  if (!articleId) { showNotFound(); return; }
+  article = await getArticleById(articleId);
+  if (!article) { showNotFound(); return; }
+  renderArticle();
+  loadRelated();
+}
+
+function showNotFound() {
+  document.getElementById('page-content').innerHTML = `
+    <div style="text-align:center;padding:80px 20px;">
+      <div style="font-size:32px;margin-bottom:12px;">😕</div>
+      <h2 style="font-size:20px;color:var(--ink-mid);margin-bottom:8px;">கட்டுரை கிடைக்கவில்லை</h2>
+      <a href="index.html" class="btn-primary">← முகப்புக்கு திரும்பவும்</a>
+    </div>`;
+}
+
+function renderArticle() {
+  document.title = article.title + ' — தேர்வு வெற்றி';
+  const colors = THUMB_COLORS[parseInt(article.id) % THUMB_COLORS.length] || THUMB_COLORS[0];
+  const contentHTML = article.content.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
+
+  const quizHTML = article.quiz.map((q, qi) => `
+    <div class="question-block" id="q${qi}">
+      <div class="q-text">${qi+1}. ${q.question}</div>
+      ${q.options.map((opt, oi) => `
+        <div class="option" onclick="pickAnswer(${qi},${oi},${q.correct})">
+          <span class="option-letter">${['அ','ஆ','இ','ஈ'][oi]}</span>${opt}
+        </div>`).join('')}
+      <div class="explanation" id="exp${qi}">${q.explanation}</div>
+    </div>`).join('');
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="article-wrap">
+      <a href="index.html" class="back-link">← முகப்புக்கு திரும்பவும்</a>
+      <div class="article-header">
+        <span class="cat-badge">${article.category}</span>
+        <h1>${article.title}</h1>
+        <div class="meta">
+          <span>${formatDate(article.date)}</span>
+          <span>·</span>
+          <span class="quiz-tag">${article.quiz.length} வினாடி வினா</span>
+          <span>·</span>
+          <span>TNPSC Group 2 & 4</span>
+        </div>
+      </div>
+      <div class="article-thumb-full" style="background:linear-gradient(135deg,${colors[0]} 0%,${colors[1]} 100%);">
+        ${article.emoji || '📰'}
+      </div>
+      <div class="article-body">${contentHTML}</div>
+      <div class="exam-box">
+        <div class="exam-box-title">TNPSC தேர்வு கோணம் — இதை கவனியுங்கள்</div>
+        ${article.examTips.map(t => `<div class="exam-item"><span class="exam-dot"></span>${t}</div>`).join('')}
+      </div>
+      <hr class="divider">
+      <div class="quiz-section">
+        <div class="quiz-heading">📝 வினாடி வினா — இன்றைய செய்தி</div>
+        ${quizHTML}
+        <button class="btn-primary" id="submit-btn" onclick="submitQuiz()" disabled style="margin-top:8px;">விடைகளை சரிபார்க்கவும்</button>
+        <div class="score-box" id="score-box">
+          <div class="score-num" id="score-num"></div>
+          <div class="score-msg" id="score-msg"></div>
+          <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <a href="#" onclick="shareWhatsApp();return false;" class="btn-secondary">📤 WhatsApp-ல் share</a>
+            <a href="index.html" class="btn-primary">← மேலும் கட்டுரைகள்</a>
+          </div>
+        </div>
+      </div>
+      <div class="share-row">
+        <span class="share-label">பகிரவும்:</span>
+        <a href="#" onclick="shareWhatsApp();return false;" class="share-btn">📤 WhatsApp</a>
+        <a href="#" onclick="copyLink();return false;" class="share-btn">🔗 Link Copy</a>
+      </div>
+    </div>
+    <div id="related-section"></div>`;
+}
+
+function pickAnswer(qi, oi, correct) {
+  const qBlock = document.getElementById('q'+qi);
+  qBlock.querySelectorAll('.option').forEach(o => o.style.background='');
+  qBlock.querySelectorAll('.option')[oi].style.background='var(--saffron-light)';
+  userAnswers[qi] = oi;
+  if (Object.keys(userAnswers).length === article.quiz.length) {
+    document.getElementById('submit-btn').disabled = false;
+  }
+}
+
+function submitQuiz() {
+  let score = 0;
+  article.quiz.forEach((q, qi) => {
+    const qBlock = document.getElementById('q'+qi);
+    qBlock.querySelectorAll('.option').forEach((o,oi) => {
+      o.style.background='';
+      o.classList.add('disabled');
+      if (oi===q.correct) o.classList.add('correct');
+      else if (oi===userAnswers[qi]) o.classList.add('wrong');
+    });
+    document.getElementById('exp'+qi).style.display='block';
+    if (userAnswers[qi]===q.correct) score++;
+  });
+  document.getElementById('submit-btn').style.display='none';
+  const box = document.getElementById('score-box');
+  box.style.display='block';
+  document.getElementById('score-num').textContent = score+' / '+article.quiz.length+' சரியான விடை';
+  const msgs=['மீண்டும் முயற்சிக்கவும்! 💪','நல்ல முயற்சி! 👍','மிகவும் நல்லது! 🎉','அருமை! தொடர்ந்து படியுங்கள்! 🏆'];
+  document.getElementById('score-msg').textContent = msgs[Math.min(score, msgs.length-1)];
+}
+
+function shareWhatsApp() {
+  const text = `TNPSC செய்தி + வினாடி வினா:\n\n${article.title}\n\nநீங்களும் படியுங்கள் → ${window.location.href}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied! ✓'));
+}
+
+async function loadRelated() {
+  const all = await getAllArticles();
+  const related = all.filter(a => a.id !== articleId).slice(0,4);
+  if (!related.length) return;
+  document.getElementById('related-section').innerHTML = `
+    <div class="related-section">
+      <hr class="divider" style="margin-bottom:24px;">
+      <div class="section-title" style="font-family:'Tiro Tamil',serif;font-size:20px;color:var(--ink);margin-bottom:16px;">மேலும் படிக்கவும்</div>
+      <div class="related-grid">
+        ${related.map(a=>`
+          <a href="article.html?id=${a.id}" class="related-card">
+            <div class="related-cat">${a.category}</div>
+            <div class="related-title">${a.title}</div>
+          </a>`).join('')}
+      </div>
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>
