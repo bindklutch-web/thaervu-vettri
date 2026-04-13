@@ -42,34 +42,31 @@ Return ONLY a valid JSON object with no extra text, no markdown, no code fences.
 }`;
 
     const bodyStr = JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
     });
 
+    const apiKey = process.env.GEMINI_API_KEY;
     const options = {
-      hostname: 'api.anthropic.com',
-      path: '/v1/messages',
+      hostname: 'generativelanguage.googleapis.com',
+      path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
         'Content-Length': Buffer.byteLength(bodyStr)
       }
     };
 
     const data = await httpsPost(options, bodyStr);
 
-    // Surface full API error if something went wrong
-    if (!data.content) {
+    if (!data.candidates || !data.candidates[0]) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'API error', details: JSON.stringify(data) })
+        body: JSON.stringify({ error: 'Gemini error', details: JSON.stringify(data) })
       };
     }
 
-    const text = data.content[0].text.trim();
+    const text = data.candidates[0].content.parts[0].text.trim();
     const clean = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
     const parsed = JSON.parse(clean);
 
