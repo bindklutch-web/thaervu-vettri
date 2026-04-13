@@ -60,6 +60,15 @@ Return ONLY a valid JSON object with no extra text, no markdown, no code fences.
     };
 
     const data = await httpsPost(options, bodyStr);
+
+    // Surface full API error if something went wrong
+    if (!data.content) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'API error', details: JSON.stringify(data) })
+      };
+    }
+
     const text = data.content[0].text.trim();
     const clean = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
     const parsed = JSON.parse(clean);
@@ -71,7 +80,6 @@ Return ONLY a valid JSON object with no extra text, no markdown, no code fences.
     };
 
   } catch (e) {
-    console.error(e);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: e.message })
